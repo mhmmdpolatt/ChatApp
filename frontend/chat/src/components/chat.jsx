@@ -11,6 +11,8 @@ const Chat = () => {
     const [joined, setJoined] = useState(false);
     const [aktifKullanici, setAktifKullanici] = useState([]);
     const [kullanılanNick, setKullanılanNick] = useState(false);
+    const [eski, setEski] = useState(false);
+    const [eskiMesajlar, setEskiMesajlar] = useState([])
 
     const ws = useRef(null);
     const navigate = useNavigate()
@@ -91,13 +93,8 @@ const Chat = () => {
         };
 
         // Önceki mesajları al
-        // axios.get('http://localhost:5000/messages')
-        //     .then(response => {
-        //         setMessages(response.data);
-        //     })
-        //     .catch(error => {
-        //         console.error('Mesajları çekerken hata:', error);
-        //     });
+
+
 
         return () => {
             if (ws.current) {
@@ -105,6 +102,18 @@ const Chat = () => {
             }
         };
     }, []);
+
+    if (eski) {
+        axios.get('http://localhost:5000/messages')
+            .then(response => {
+                setEskiMesajlar(response.data);
+                console.log("ESKİ MESAJLAR İÇİN DATA", response.data);
+
+            })
+            .catch(error => {
+                console.error('Mesajları çekerken hata:', error);
+            });
+    }
 
     // Kullanıcı giriş yapınca çağrılır
     const handleJoin = () => {
@@ -157,6 +166,10 @@ const Chat = () => {
     const currentUser = messages.filter((msg) => msg.nickname == nickname);
     console.log("Mesaj Sahibi", currentUser);
 
+    const handleViewOldMessage = () => {
+        setEski(!eski);
+
+    }
 
 
 
@@ -257,7 +270,11 @@ const Chat = () => {
                                 Gönder
                             </button>
                             <button onClick={handleLeaveChat} className="p-3 bg-slate-800 ml-2 text-white rounded-md hover:bg-blue-600 transition duration-200 text-nowrap">Sohbetten Çık</button>
+                            <button onClick={handleViewOldMessage} className="p-3 bg-slate-800 ml-2 text-white rounded-md hover:bg-blue-600 transition duration-200 text-nowrap">{eski ? (<span>Gizle</span>) : (<span>Eski Mesajları Göster</span>)}</button>
+
                         </div>
+
+
                         <div>
                             <h1 className='text-white text-2xl text-center mb-5'>Şuan Sohbet Odasında Bulunanlar : {aktifKullanici.length}</h1>
                             <div className='bg-white p-3 '>
@@ -267,8 +284,47 @@ const Chat = () => {
                             </div>
 
                         </div>
+
                     </div>
                 )}
+                {eski ? (<>
+
+                    <div className="h-80 w-full overflow-y-scroll border border-gray-300 p-4 mb-4 rounded-md shadow-md bg-white max-w-lg mt-8"> {eskiMesajlar.map((msg, index) => (
+                        <div
+                            key={index}
+                            className="flex "
+                        >
+
+                            <div
+                                className={`p-4 flex gap-x-2 mt-3 rounded-lg shadow-lg max-w-md w-full ${msg.nickname === nickname
+                                    ? 'bg-blue-500 text-white justify-end' // Kullanıcının mesajı sağda ve mavi
+                                    : 'bg-gray-200 text-black justify-start' // Diğer mesajlar solda ve gri
+                                    }`}
+                            >
+                                <div className="flex items-start">
+                                    <strong className="block font-semibold text-sm">{msg.user_name}:</strong>
+                                    <span className={`${msg.type === "notification" ? "bg-none" : "ml-2"}`}>{msg.message}</span>
+                                </div>
+
+                                {/* Tarih kısmı */}
+                                <div className="flex justify-end text-xs text-gray-500 mt-2">
+                                    <span>
+                                        {`${new Date(msg.timestamp).getFullYear()}-${new Date(msg.timestamp).getMonth() + 1}-${new Date(msg.timestamp).getDate()} 
+      ${new Date(msg.timestamp).getHours()}:${new Date(msg.timestamp).getMinutes()}`}
+                                    </span>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    ))}</div>
+
+
+
+                </>
+                ) : (null)}
+
             </div>
         </>
     )

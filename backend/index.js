@@ -142,16 +142,16 @@ function saveMessage(username, message) {
 }
 
 
-// API: Mesajları getir
-// app.get('/messages', async (req, res) => {
-//     try {
-//         const result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
-//         res.json(result.rows);
-//     } catch (err) {
-//         console.error('Mesajlar getirilirken hata oluştu:', err);
-//         res.status(500).send('Sunucu hatası');
-//     }
-// });
+//API:
+app.get('/messages', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM messages ORDER BY timestamp ASC');
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Mesajlar getirilirken hata oluştu:', err);
+        res.status(500).send('Sunucu hatası');
+    }
+});
 
 port=process.env.PORT
 
