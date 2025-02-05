@@ -27,4 +27,5 @@ const createMessagesTable = async () => {
   }
 };
 
+
 module.exports = { pool, createMessagesTable };

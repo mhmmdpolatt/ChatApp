@@ -4,38 +4,51 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+
 const { pool, createMessagesTable } = require("./db");
 const WebSocket = require("ws");
 
 
 
 
+
 const app = express();
 
-app.use(express.json());
+
+
+
+
+
+
+
 
 console.log("Fonksiyon:", createMessagesTable);
 createMessagesTable();
 
 // Güvenlik önlemleri
 app.use(helmet());
-app.use(cors());
+
 app.use(express.json());
 
+app.use(cors());
+
 // WebSocket sunucusu
+
+
 const wss = new WebSocket.Server({ port: process.env.WS_PORT });
-console.log(`ws çalışıyor port: ${process.env.WS_PORT}`);
-
-
- // Bağlı kullanıcılar
-
-
-
-
 
 let users = new Set();
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws,req) => {
+    const params=new URLSearchParams(req.url.split("?")[1])
+    const uid=params.get("uid");
+    if(!uid){
+        console.log("GEÇERSİZ UID VEYA YOK");
+        ws.close(1008,"GEÇERSİZ");
+        return
+        
+    }
+    console.log(`UID kabul edildi. Kullanıcı UID: ${uid}`);
     console.log('Yeni bir kullanıcı bağlandı.');
 
     ws.on('message', (message) => {

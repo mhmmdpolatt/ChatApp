@@ -1,6 +1,8 @@
 import React from 'react'
 import axios from 'axios';
 import { useState, useRef, useEffect } from 'react';
+import getUID from "../utils/getUID"; // Doğru import
+import { useNavigate } from 'react-router-dom';
 
 const Chat = () => {
     const [nickname, setNickname] = useState('');
@@ -11,12 +13,44 @@ const Chat = () => {
     const [kullanılanNick, setKullanılanNick] = useState(false);
 
     const ws = useRef(null);
+    const navigate = useNavigate()
     console.log("messajlar", messages);
     console.log("KULLANICILAR", aktifKullanici);
 
     useEffect(() => {
         // WebSocket bağlantısını başlat
-        ws.current = new WebSocket('ws://localhost:8080');
+        //Tokenı local storegadn al
+        // const token = localStorage.getItem("token");
+        // if (!token) {
+
+        //     console.log("GİRİŞ YAPMANIZ LAZIM");
+        //     return navigate("giris")
+
+
+        // } else {
+        //     axios.get("http://localhost:5000/verify-token", {
+        //         headers: {
+        //             Authorization: `Bearer ${token}`,
+        //         },
+        //     }).then(response => {
+        //         if (response.data.valid) {
+        //             // Token geçerliyse chat sayfasına devam et
+        //             console.log('Token geçerli, Chat sayfasına yönlendiriliyor.');
+        //         } else {
+        //             // Token geçerli değilse giriş sayfasına yönlendir
+        //             navigate('/giris');
+        //         }
+        //     })
+        //         .catch(error => {
+        //             console.error('Token doğrulama hatası:', error);
+        //             navigate('/giris');
+        //         });
+        // }
+        //UİD
+        const uid = getUID();
+        console.log("UID : ", uid);
+
+        ws.current = new WebSocket(`ws:localhost:8080?uid=${uid}`);
 
         ws.current.onopen = () => {
             console.log('WebSocket bağlantısı kuruldu.');
@@ -143,12 +177,12 @@ const Chat = () => {
                             onChange={(e) => setNickname(e.target.value)}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
-                                  handleJoin(); // Enter tuşuna basıldığında mesaj gönder
+                                    handleJoin(); // Enter tuşuna basıldığında mesaj gönder
                                 }
-                              }}
+                            }}
                             className="mb-4 p-3 rounded-md border border-gray-300 text-white focus:outline-none "
                         />
-                      
+
                         <button
                             onClick={handleJoin}
                             className="p-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200"
@@ -205,19 +239,19 @@ const Chat = () => {
                                 onChange={(e) => setMessage(e.target.value)}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
-                                      handleSend(); // Enter tuşuna basıldığında mesaj gönder
+                                        handleSend(); // Enter tuşuna basıldığında mesaj gönder
                                     }
-                                  }}
+                                }}
                                 className="w-full p-3 rounded-md border border-gray-300 focus:outline-none mr-2 text-white"
                             />
                             <button
                                 onClick={handleSend}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
-                                      handleSend(); // Enter tuşuna basıldığında mesaj gönder
+                                        handleSend(); // Enter tuşuna basıldığında mesaj gönder
                                     }
-                                  }}
-                                
+                                }}
+
                                 className="p-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200"
                             >
                                 Gönder

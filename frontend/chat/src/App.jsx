@@ -9,6 +9,8 @@ import {
 import axios from 'axios';
 import Home from './components/home';
 import Chat from './components/chat';
+import Kayit from './components/Kayit';
+// import Giris from './components/Giris';
 
 const App = () => {
 
@@ -23,6 +25,9 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path='/Kayit' element={<Kayit/>} />
+          {/* <Route path='/giris' element={<Giris/>} /> */}
+
         </Routes>
       </Router>
 
