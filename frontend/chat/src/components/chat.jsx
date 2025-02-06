@@ -20,35 +20,7 @@ const Chat = () => {
     console.log("KULLANICILAR", aktifKullanici);
 
     useEffect(() => {
-        // WebSocket bağlantısını başlat
-        //Tokenı local storegadn al
-        // const token = localStorage.getItem("token");
-        // if (!token) {
 
-        //     console.log("GİRİŞ YAPMANIZ LAZIM");
-        //     return navigate("giris")
-
-
-        // } else {
-        //     axios.get("http://localhost:5000/verify-token", {
-        //         headers: {
-        //             Authorization: `Bearer ${token}`,
-        //         },
-        //     }).then(response => {
-        //         if (response.data.valid) {
-        //             // Token geçerliyse chat sayfasına devam et
-        //             console.log('Token geçerli, Chat sayfasına yönlendiriliyor.');
-        //         } else {
-        //             // Token geçerli değilse giriş sayfasına yönlendir
-        //             navigate('/giris');
-        //         }
-        //     })
-        //         .catch(error => {
-        //             console.error('Token doğrulama hatası:', error);
-        //             navigate('/giris');
-        //         });
-        // }
-        //UİD
         const uid = getUID();
         console.log("UID : ", uid);
 
@@ -131,7 +103,7 @@ const Chat = () => {
             return;
         }
 
-        // Kullanıcı zaten listede mi? (Son güncellenmiş listeyi kontrol et)
+        // Kullanıcı zaten listede mi ? 
         setTimeout(() => {
             if (aktifKullanici.includes(nickname)) {
                 console.log("Bu kullanıcı adı zaten mevcut!");
@@ -209,83 +181,93 @@ const Chat = () => {
 
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center w-full max-w-lg">
+                    <>
                         <h1 className='p-1 text-white'>Buraya <strong>{nickname}</strong> Olarak Katıldın</h1>
-                        <div className="h-80 w-full overflow-y-scroll border border-gray-300 p-4 mb-4 rounded-md shadow-md bg-white">
-                            {messages.map((msg, index) => (
-                                <div
-                                    key={index}
-                                    className={`flex ${msg.type === "message" && msg.nickname === nickname
-                                        ? 'justify-end'  // Eğer type "message" ve nickname eşleşiyorsa sağa yerleştir
-                                        : msg.type !== "message"
-                                            ? 'justify-center'  // Eğer type "message" değilse ortala
-                                            : 'justify-start'   // Diğer durumda sola yerleştir
-                                        }`}
-                                >
-
+                        <div className="flex flex-col items-center w-full max-w-lg">
+                            <div className="h-100 w-full overflow-y-scroll p-4 mb-4 border border-white rounded-md shadow-md scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300 ">
+                                {messages.map((msg, index) => (
                                     <div
-                                        className={`p-2 flex gap-x-1.5 mt-2 rounded-md shadow-md max-w-xs ${msg.nickname === nickname
-                                            ? 'bg-blue-500 text-white '  // Kullanıcının mesajı sağda ve mavi
-                                            : 'bg-gray-200 text-black'
+                                        key={index}
+                                        className={`flex ${msg.type === "message" && msg.nickname === nickname
+                                            ? 'justify-end'  // Eğer type "message" ve nickname eşleşiyorsa sağa yerleştir
+                                            : msg.type !== "message"
+                                                ? 'justify-center'  // Eğer type "message" değilse ortala
+                                                : 'justify-start'   // Diğer durumda sola yerleştir
+                                            }`}
+                                    >
 
-                                            // Diğer mesajlar solda ve gri
-                                            }
+                                        <div
+                                            className={`p-2 flex flex-col justify-start  gap-x-1.5 mt-2 rounded-md shadow-md max-w-xs ${msg.nickname === nickname
+                                                ? 'bg-blue-400 text-white '  // Kullanıcının mesajı sağda ve mavi
+                                                : 'bg-gray-200 text-gray-900 text-base'
+
+                                                // Diğer mesajlar solda ve gri
+                                                }
 
                                             `}
-                                    >
-                                        {msg.nickname && (
-                                            <strong className={`${msg.nickname === nickname ? "hidden" : "block"}`}>{msg.nickname} : </strong>
-                                        )}
-                                        <span className={`${msg.type === "notification" ? "bg-none" : ""}`}>{msg.message}</span>
+                                        >
+                                            {msg.nickname && (
+                                                <strong className={`${msg.nickname === nickname ? "hidden" : "block"}`}>{msg.nickname}  </strong>
+                                            )}
+                                            <span className={`${msg.type === "notification" ? "bg-none" : ""}`}>{msg.message}</span>
+
+
+                                        </div>
                                     </div>
+                                ))}
+                            </div>
+
+
+
+                            <div className="flex flex-col items-center w-full">
+                                <div className='flex  w-full items-center gap-x-1'>
+                                    <input
+                                        type="text"
+                                        placeholder="Mesajınızı yazın"
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleSend(); // Enter tuşuna basıldığında mesaj gönder
+                                            }
+                                        }}
+                                        className="w-full p-3 rounded-md border border-gray-300 focus:outline-none  mr-2 text-white"
+                                    />
+                                    <button
+                                        onClick={handleSend}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleSend(); // Enter tuşuna basıldığında mesaj gönder
+                                            }
+                                        }}
+
+                                        className="p-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200"
+                                    >
+                                        Gönder
+                                    </button>
                                 </div>
-                            ))}
-                        </div>
+
+                                <div className='flex w-full justify-center mt-4'>
+                                    <button onClick={handleLeaveChat} className="p-3 bg-gradient-to-r from-slate-700 to-slate-900 ml-2 text-white rounded-md hover:bg-blue-600 transition duration-200 text-nowrap">Sohbetten Çık</button>
+                                    <button onClick={handleViewOldMessage} className="p-3 bg-slate-800 ml-2 text-white rounded-md hover:bg-blue-600 transition duration-200 text-nowrap">{eski ? (<span>Gizle</span>) : (<span>Eski Mesajları Göster</span>)}</button>
+                                </div>
 
 
-
-                        <div className="flex items-center w-full">
-                            <input
-                                type="text"
-                                placeholder="Mesajınızı yazın"
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleSend(); // Enter tuşuna basıldığında mesaj gönder
-                                    }
-                                }}
-                                className="w-full p-3 rounded-md border border-gray-300 focus:outline-none mr-2 text-white"
-                            />
-                            <button
-                                onClick={handleSend}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleSend(); // Enter tuşuna basıldığında mesaj gönder
-                                    }
-                                }}
-
-                                className="p-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200"
-                            >
-                                Gönder
-                            </button>
-                            <button onClick={handleLeaveChat} className="p-3 bg-slate-800 ml-2 text-white rounded-md hover:bg-blue-600 transition duration-200 text-nowrap">Sohbetten Çık</button>
-                            <button onClick={handleViewOldMessage} className="p-3 bg-slate-800 ml-2 text-white rounded-md hover:bg-blue-600 transition duration-200 text-nowrap">{eski ? (<span>Gizle</span>) : (<span>Eski Mesajları Göster</span>)}</button>
-
-                        </div>
+                            </div>
 
 
-                        <div>
-                            <h1 className='text-white text-2xl text-center mb-5'>Şuan Sohbet Odasında Bulunanlar : {aktifKullanici.length}</h1>
-                            <div className='bg-white p-3 '>
-                                {aktifKullanici.map((a, index) => {
-                                    return <h1 className='text-gray-800' key={index}>{a}</h1>;  // return ekleyerek öğeyi döndür
-                                })}
+                            <div className='absolute left-[80%] top-[28%]'>
+                                <h1 className='text-white text-2xl text-center mb-5'>ÇEVRİMİÇİ : {aktifKullanici.length}</h1>
+                                <div className=' p-3 '>
+                                    {aktifKullanici.map((a, index) => {
+                                        return <h1 className='text-gray-100' key={index}>{a}</h1>;  // return ekleyerek öğeyi döndür
+                                    })}
+                                </div>
+
                             </div>
 
                         </div>
-
-                    </div>
+                    </>
                 )}
                 {eski ? (<>
 
@@ -296,14 +278,13 @@ const Chat = () => {
                         >
 
                             <div
-                                className={`p-4 flex gap-x-2 mt-3 rounded-lg shadow-lg max-w-md w-full ${msg.nickname === nickname
-                                    ? 'bg-blue-500 text-white justify-end' // Kullanıcının mesajı sağda ve mavi
-                                    : 'bg-gray-200 text-black justify-start' // Diğer mesajlar solda ve gri
-                                    }`}
+                                className={`p-4 flex-col justify-start items-center gap-x-2 mt-3 rounded-lg shadow-lg max-w-md w-1/2 
+                                     bg-gray-200
+                                    `}
                             >
-                                <div className="flex items-start">
-                                    <strong className="block font-semibold text-sm">{msg.user_name}:</strong>
-                                    <span className={`${msg.type === "notification" ? "bg-none" : "ml-2"}`}>{msg.message}</span>
+                                <div className="flex-col items-start">
+                                    <strong className="block font-semibold text-sm">{msg.user_name}</strong>
+                                    <span className={``}>{msg.message}</span>
                                 </div>
 
                                 {/* Tarih kısmı */}

@@ -3,7 +3,7 @@ const express = require('express');
 
 const cors = require('cors');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
+
 
 const { pool, createMessagesTable } = require("./db");
 const WebSocket = require("ws");
@@ -65,7 +65,7 @@ wss.on('connection', (ws,req) => {
     });
 });
 
-// 🔹 Gelen mesajları yönet
+//  Gelen mesajları yönet
 function handleMessage(ws, data) {
     if (data.type === 'join') {
         handleUserJoin(ws, data);
@@ -75,7 +75,7 @@ function handleMessage(ws, data) {
     }
 }
 
-// 🔹 Kullanıcı katıldığında çalışır
+//  Kullanıcı katıldığında çalışır
 function handleUserJoin(ws, data) {
     if (users.has(data.nickname)) {
         return ws.send(JSON.stringify({ type: 'error', message: 'Bu ad zaten kullanılıyor.' }));
@@ -90,7 +90,7 @@ function handleUserJoin(ws, data) {
     updateActiveUsers();
 }
 
-// 🔹 Kullanıcı ayrıldığında çalışır
+//  Kullanıcı ayrıldığında çalışır
 function handleDisconnect(ws) {
     if (ws.nickname) {
         users.delete(ws.nickname);
@@ -99,7 +99,7 @@ function handleDisconnect(ws) {
     }
 }
 
-// 🔹 Mesajı herkese gönder
+//  Mesajı herkese gönder
 function broadcastMessage(ws, message) {
     wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
@@ -108,7 +108,7 @@ function broadcastMessage(ws, message) {
     });
 }
 
-// 🔹 Bildirim mesajını herkese gönder
+//  Bildirim mesajını herkese gönder
 function broadcastNotification(message, sender) {
     wss.clients.forEach((client) => {
         if (client !== sender && client.readyState === WebSocket.OPEN) {
@@ -117,7 +117,7 @@ function broadcastNotification(message, sender) {
     });
 }
 
-// 🔹 Kullanıcı listesi güncellendiğinde herkese gönder
+//  Kullanıcı listesi güncellendiğinde herkese gönder
 function updateActiveUsers() {
     const activeUsers = Array.from(users);
     wss.clients.forEach((client) => {
@@ -127,14 +127,14 @@ function updateActiveUsers() {
     });
 }
 
-// 🔹 Yeni bağlanan kullanıcıya aktif kullanıcıları gönder
+//  Yeni bağlanan kullanıcıya aktif kullanıcıları gönder
 function sendActiveUsers(ws) {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: 'active', users: Array.from(users) }));
     }
 }
 
-// 🔹 Mesajları veritabanına kaydet
+//  Mesajları veritabanına kaydet
 function saveMessage(username, message) {
     pool.query('INSERT INTO messages (user_name, message) VALUES ($1, $2)', [username, message], (err) => {
         if (err) console.error('Mesaj kaydedilirken hata oluştu:', err);
