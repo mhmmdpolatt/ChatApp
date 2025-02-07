@@ -57,5 +57,7 @@ Bu proje, **ChatApp** adlı bir sohbet uygulamasının hem **Backend** hem de **
    npm run dev
    ```
 
-🚀 Ardından, **http://localhost:5173** adresinden projeyi görüntüleyebilirsiniz.
+🚀 Ardından, **http://localhost:5173** adresinden projeyi görüntüleyebilirsiniz. İyi Kodlamalar
+
+
 
