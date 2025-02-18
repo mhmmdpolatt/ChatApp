@@ -5,7 +5,7 @@ Bu proje, **ChatApp** adlı bir sohbet uygulamasının hem **Backend** hem de **
 ## Proje Yapısı
 
 - **Backend**: Express.js ve WebSocket ile geliştirilmiştir. PostgreSQL veritabanı kullanır.
-- **Frontend**: React ve Vite kullanılarak oluşturulmuştur. WebSocket ile sunucuya bağlanır.
+- **Frontend**: React ve Vite kullanılarak oluşturulmuştur. WebSocket ile sunucuya bağlanır..
 
 ## Backend Kurulumu ve Çalıştırma
 
